@@ -1,0 +1,10 @@
+# .NET
+bin/
+obj/
+
+# React
+node_modules/
+build/
+
+# VS
+.vs/

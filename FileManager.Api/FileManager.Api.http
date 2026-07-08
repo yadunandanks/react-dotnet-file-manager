@@ -1,0 +1,38 @@
+
+
+@host = http://localhost:5007
+
+### Get all files
+GET {{host}}/api/files
+Accept: application/json
+
+###
+
+
+
+### Get first page
+GET {{host}}/api/files?pageNumber=1&pageSize=10
+Accept: application/json
+
+### Upload a file
+POST {{host}}/api/files/upload
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="file"; filename="sample3.txt"
+Content-Type: text/plain
+
+Hello from REST Client!
+--MyBoundary--
+
+###
+
+### Download file (replace 1 with an existing file id)
+GET {{host}}/api/files/1/download
+
+###
+
+### Delete file (replace 1 with an existing file id)
+DELETE {{host}}/api/files/1
+
+###

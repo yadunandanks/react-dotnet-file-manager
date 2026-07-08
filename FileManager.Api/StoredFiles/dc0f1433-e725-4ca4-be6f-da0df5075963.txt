@@ -1,0 +1,69 @@
+C# Fundamentals
+    ↓
+Classes & Objects
+    ↓
+Encapsulation
+    ↓
+Inheritance
+    ↓
+Polymorphism
+    ↓
+Abstraction
+    ↓
+Interfaces
+    ↓
+Collections(
+1. List<T>
+2. Dictionary<TKey, TValue>
+3. IEnumerable<T>
+4. LINQ
+
+)
+    ↓
+Generics
+    ↓
+Delegates
+    ↓
+Events
+    ↓
+Lambda Expressions
+    ↓
+LINQ
+    ↓
+Exception Handling
+    ↓
+Memory Management
+(Stack vs Heap, GC, IDisposable, Boxing)
+    ↓
+Async/Await + Tasks
+    ↓
+SOLID Principles
+    ↓
+Dependency Injection
+    ↓
+Design Patterns
+    ↓
+Entity Framework Core
+    ↓
+ASP.NET Core
+↓
+Entity Framework Core
+↓
+Authentication/JWT
+↓
+Caching
+↓
+Logging
+↓
+Clean Architecture
+Microservices
+↓
+Message Queues
+↓
+Docker
+↓
+Redis
+↓
+Cloud Basics
+↓
+System Design
