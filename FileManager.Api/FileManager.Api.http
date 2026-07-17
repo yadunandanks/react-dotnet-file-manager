@@ -44,3 +44,10 @@ Content-Type: application/json
   "newFileName": "Resume_Final.pdf"
 }
 
+### Update Description Only
+PATCH http://localhost:5007/api/files/2
+Content-Type: application/json
+
+{
+  "description": "Updated interview resume"
+}

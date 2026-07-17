@@ -13,6 +13,11 @@ namespace FileManager.Api.Models
         public string ContentType { get; set; }="";
         public long SizeInBytes { get; set; }
     public DateTime UploadedAtUtc { get; set; } = DateTime.UtcNow;
+    public string Description { get; set; }="";
+
+    public string Tags { get; set; }="";
+
+    public string Category { get; set; }="";
 
         
 

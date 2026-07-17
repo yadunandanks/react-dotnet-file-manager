@@ -56,4 +56,12 @@ export const renameFile= async(id,newFileName)=> {
     return response.data;
 }
 
-// export const deletedFile= (id)=> axios.delete(`${API_BASE}/${id}`);
+export const updateMetadata=async(id,metadata)=> {
+
+    const response= await axios.patch(`${API_BASE}/${id}`, 
+
+        metadata
+    );
+return response.data;
+   
+}

@@ -10,6 +10,11 @@ namespace FileManager.Api.DTOs
         string FileName,
         string  ContentType,
         long SizeInBytes,
-        DateTime UploadedAtUtc );
+        DateTime UploadedAtUtc,
+        string Description,
+    string Tags,
+    string Category
+        
+         );
         
 }

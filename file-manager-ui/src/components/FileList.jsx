@@ -1,4 +1,4 @@
-import { downloadFile, deletedFile, renameFile } from "../api/filesApi";
+import { downloadFile, deletedFile, renameFile,updateMetadata } from "../api/filesApi";
 
 import {
   Table,
@@ -27,12 +27,16 @@ function formatSize(bytes) {
 
 export default function FileList({ files, onChanged }) {
 const[renameOpen,setRenameOpen]= useState(false);
-const[selectedFileId,setSelectedFileId]=useState(null);
+const[selectedFile,setSelectedFile]=useState(null);
 const[newFileName,setNewFileName]=useState("");
+const[description,setDescription]=useState("");
+const[category,setCategory]=useState("");
+const[tags,setTags]=useState("");
+const[metadataopen,setMetadataOpen]=useState(false);
 
 
 const handleRenameClick=(file)=> {
-setSelectedFileId(file.id)
+setSelectedFile(file.id)
 setNewFileName(file.fileName);
 setRenameOpen(true);
 }
@@ -40,7 +44,7 @@ setRenameOpen(true);
 const handleRename=async()=> {
 
   try {
-    await renameFile(selectedFileId,newFileName);
+    await renameFile(selectedFile,newFileName);
     setRenameOpen(false);
     onChanged();
 
@@ -48,6 +52,42 @@ const handleRename=async()=> {
   catch {
     alert("rename failed");
   }
+}
+
+const handleMetadataClick= async(file)=> {
+
+  setSelectedFile(file);
+  setDescription(file.description || "");
+    setTags(file.tags || "");
+    setCategory(file.category || "");
+
+    setMetadataOpen(true);
+
+
+   
+
+}
+    
+
+const handleMetadataSave =async()=> {
+
+try {
+
+  await  updateMetadata(selectedFile.id, {
+    description,
+    tags,
+    category
+  });
+   setMetadataOpen(false);
+
+        onChanged();
+
+} catch {
+alert("Metadata update failed.");
+  
+  
+}
+
 }
 
 
@@ -158,6 +198,11 @@ const handleRename=async()=> {
 >
     Rename
 </Button>
+  <button onClick={() => handleMetadataClick(file)}>
+    Edit Metadata
+</button>
+
+
 
                   <Button
                     variant="contained"
@@ -201,7 +246,72 @@ const handleRename=async()=> {
         <button onClick={() => setRenameOpen(false)}>
             Cancel
         </button>
+      
 
+    </div>
+)}
+
+{metadataopen && (
+    <div
+        style={{
+            position: "fixed",
+            top: "30%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            background: "#fff",
+            border: "1px solid #ccc",
+            padding: "20px",
+            borderRadius: "8px",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+            zIndex: 9999,
+            minWidth: "350px"
+        }}
+    >
+        <h3>Edit Metadata</h3>
+
+        <div style={{ marginBottom: "10px" }}>
+            <label>Description</label>
+            <br />
+            <input
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                style={{ width: "100%" }}
+            />
+        </div>
+
+        <div style={{ marginBottom: "10px" }}>
+            <label>Tags</label>
+            <br />
+            <input
+                type="text"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                style={{ width: "100%" }}
+            />
+        </div>
+
+        <div style={{ marginBottom: "15px" }}>
+            <label>Category</label>
+            <br />
+            <input
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                style={{ width: "100%" }}
+            />
+        </div>
+
+        <button onClick={handleMetadataSave}>
+            Save
+        </button>
+
+        <button
+            onClick={() => setMetadataOpen(false)}
+            style={{ marginLeft: "10px" }}
+        >
+            Cancel
+        </button>
     </div>
 )}
      </>

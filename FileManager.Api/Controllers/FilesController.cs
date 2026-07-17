@@ -39,9 +39,18 @@ namespace FileManager.Api.Controllers
 public async Task<IActionResult> Rename(int id, RenameFileRequest request) 
         {
             
-             var file= await _fileService.RenameAsync(id, request);
+             var file= await _fileService.RenameAsync(id, request );
              return Ok(file);
         }
+
+[HttpPatch("{id}")]
+public async Task<IActionResult> UpdateMetadata(int id, UpdateMetadataRequest request)
+        {
+         var file= await _fileService.UpdateMetadataAsync(id,request);  
+         return Ok(file); 
+
+        }
+
 
 
 [HttpPost("upload")]

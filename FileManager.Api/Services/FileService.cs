@@ -55,7 +55,7 @@ namespace FileManager.Api.Services
         _db.Files.Add(metadata);
         await _db.SaveChangesAsync();
          return new FileDto(metadata.Id, metadata.OriginalFileName, metadata.ContentType,
-            metadata.SizeInBytes, metadata.UploadedAtUtc);
+            metadata.SizeInBytes, metadata.UploadedAtUtc,metadata.Description,metadata.Category,metadata.Tags);
 
             
         }
@@ -110,7 +110,10 @@ namespace FileManager.Api.Services
             f.OriginalFileName,
             f.ContentType,
             f.SizeInBytes,
-            f.UploadedAtUtc))
+            f.UploadedAtUtc,
+            f.Description,
+            f.Category,
+            f.Tags))
         .ToListAsync();
 
     var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
@@ -172,15 +175,60 @@ namespace FileManager.Api.Services
                  file.OriginalFileName,
                  file.ContentType,
                  file.SizeInBytes,
-                 file.UploadedAtUtc
+                 file.UploadedAtUtc,
+                 file.Description,
+                 file.Category,
+                 file.Tags
 
                 );
                 
-            
-        
-
 
         }
+
+        public async Task<FileDto> UpdateMetadataAsync(int id, UpdateMetadataRequest updateMetadataRequest)
+        {
+
+              var file= await _db.Files.FindAsync(id);   
+
+              if(file==null)
+            {
+                 throw new KeyNotFoundException("File not found.");
+            } 
+
+           if (updateMetadataRequest.Description != null)
+    {
+        file.Description = updateMetadataRequest.Description;
+    }
+
+    if (updateMetadataRequest.Tags != null)
+    {
+        file.Tags = updateMetadataRequest.Tags;
+    }
+
+    if (updateMetadataRequest.Category != null)
+    {
+        file.Category = updateMetadataRequest.Category;
+    }   
+
+    await _db.SaveChangesAsync();
+
+    return new FileDto (
+        file.Id,
+        file.OriginalFileName,
+        file.ContentType,
+        file.SizeInBytes,
+        file.UploadedAtUtc,
+       file.Description,
+       file.Tags,
+       file.Category
+
+    ) ;
+            
+        }
+
+
+    
+       
 
 
 

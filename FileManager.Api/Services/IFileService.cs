@@ -13,6 +13,8 @@ namespace FileManager.Api.Services
         public Task<FileDto> SaveFileAsync(IFormFile fileName);
         public Task<FileDto> RenameAsync(int id, RenameFileRequest renameFileRequest);
         // public Task<List<FileDto>> GetAllAsync();
+        public Task<FileDto> UpdateMetadataAsync(int id, UpdateMetadataRequest updateMetadataRequest);
+
 
 
         public Task<PagedResponse<FileDto>> GetAllAsync(int pageNumber, int pageSize,string search, string sortBy,string sortOrder);
