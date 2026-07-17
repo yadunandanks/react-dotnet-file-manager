@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FileManager.Api.Data;
 using FileManager.Api.DTOs;
+using FileManager.Api.DTOs.Request;
 using FileManager.Api.Models;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
@@ -135,6 +136,56 @@ namespace FileManager.Api.Services
             return (bytes, meta.ContentType, meta.OriginalFileName);
 
         }
+
+      public async Task<FileDto> RenameAsync(int id, RenameFileRequest renameFileRequest)
+        {
+             
+
+              var file= await _db.Files.FindAsync(id);   
+
+              if(file==null)
+            {
+                 throw new KeyNotFoundException("File not found.");
+            }       
+            
+            if (string.IsNullOrWhiteSpace(renameFileRequest.NewFileName))
+{
+    throw new ArgumentException("Filename cannot be empty.");
+  
+              
+}
+
+
+ var newName= renameFileRequest.NewFileName.Trim();
+
+    bool exists= await _db.Files.AnyAsync(f=> f.Id!=id && f.OriginalFileName==newName);
+    if (exists)
+{
+    throw new InvalidOperationException("A file with this name already exists.");
+} 
+        
+                file.OriginalFileName = newName;
+                await _db.SaveChangesAsync();
+
+                return new FileDto (
+                 file.Id,
+                 file.OriginalFileName,
+                 file.ContentType,
+                 file.SizeInBytes,
+                 file.UploadedAtUtc
+
+                );
+                
+            
+        
+
+
+        }
+
+
+
+
+
         public async Task<bool> DeleteAsync(int id) {
             var meta = await _db.Files.FindAsync(id);
             if (meta is null) return false;

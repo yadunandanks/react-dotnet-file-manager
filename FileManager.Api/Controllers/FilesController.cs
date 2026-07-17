@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FileManager.Api.Services;
 using FileManager.Api.DTOs;
+using FileManager.Api.DTOs.Request;
 
 
 
@@ -33,6 +34,14 @@ namespace FileManager.Api.Controllers
     var files = await _fileService.GetAllAsync(pageNumber,pageSize,search,sortBy,sortOrder);
     return Ok(files);
 }
+
+[HttpPatch("{id}/rename")]
+public async Task<IActionResult> Rename(int id, RenameFileRequest request) 
+        {
+            
+             var file= await _fileService.RenameAsync(id, request);
+             return Ok(file);
+        }
 
 
 [HttpPost("upload")]

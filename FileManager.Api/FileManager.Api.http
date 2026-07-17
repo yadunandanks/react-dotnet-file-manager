@@ -36,3 +36,11 @@ GET {{host}}/api/files/1/download
 DELETE {{host}}/api/files/1
 
 ###
+### Rename File
+PATCH http://localhost:5007/api/files/2/rename
+Content-Type: application/json
+
+{
+  "newFileName": "Resume_Final.pdf"
+}
+

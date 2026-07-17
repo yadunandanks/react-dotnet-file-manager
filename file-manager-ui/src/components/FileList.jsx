@@ -1,4 +1,4 @@
-import { downloadFile, deletedFile } from "../api/filesApi";
+import { downloadFile, deletedFile, renameFile } from "../api/filesApi";
 
 import {
   Table,
@@ -15,6 +15,7 @@ import {
 
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useState } from "react";
 
 function formatSize(bytes) {
   if (bytes < 1024) return `${bytes} B`;
@@ -25,6 +26,30 @@ function formatSize(bytes) {
 }
 
 export default function FileList({ files, onChanged }) {
+const[renameOpen,setRenameOpen]= useState(false);
+const[selectedFileId,setSelectedFileId]=useState(null);
+const[newFileName,setNewFileName]=useState("");
+
+
+const handleRenameClick=(file)=> {
+setSelectedFileId(file.id)
+setNewFileName(file.fileName);
+setRenameOpen(true);
+}
+
+const handleRename=async()=> {
+
+  try {
+    await renameFile(selectedFileId,newFileName);
+    setRenameOpen(false);
+    onChanged();
+
+  }
+  catch {
+    alert("rename failed");
+  }
+}
+
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this file?"))
@@ -53,6 +78,8 @@ export default function FileList({ files, onChanged }) {
   // console.log(files);
 
   return (
+    <>
+   
     <TableContainer
       component={Paper}
       elevation={4}
@@ -93,7 +120,7 @@ export default function FileList({ files, onChanged }) {
             >
 
               <TableCell>
-               <TableCell>{file.fileName}</TableCell>
+               {file.fileName}
               </TableCell>
 
               <TableCell>
@@ -123,6 +150,14 @@ export default function FileList({ files, onChanged }) {
                   >
                     Download
                   </Button>
+                  <Button
+    variant="contained"
+    color="warning"
+    size="small"
+    onClick={() => handleRenameClick(file)}
+>
+    Rename
+</Button>
 
                   <Button
                     variant="contained"
@@ -148,5 +183,27 @@ export default function FileList({ files, onChanged }) {
 
       </Table>
     </TableContainer>
+
+    {renameOpen && (
+    <div className="modal">
+
+        <h3>Rename File</h3>
+
+        <input
+            value={newFileName}
+            onChange={(e) => setNewFileName(e.target.value)}
+        />
+
+        <button onClick={handleRename}>
+            Save
+        </button>
+
+        <button onClick={() => setRenameOpen(false)}>
+            Cancel
+        </button>
+
+    </div>
+)}
+     </>
   );
 }

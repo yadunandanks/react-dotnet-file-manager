@@ -40,4 +40,20 @@ export const downloadFile = (id) => {
     window.location.href = `${API_BASE}/${id}/download`;
 };
 
-export const deletedFile= (id)=> axios.delete(`${API_BASE}/${id}`);
+
+export const deletedFile= async(id)=> {
+
+    const response= await axios.delete(`${API_BASE}/${id}`);
+    return response.data;
+}
+
+export const renameFile= async(id,newFileName)=> {
+    const response =await axios.patch(`${API_BASE}/${id}/rename`, {
+
+        newFileName
+    })
+
+    return response.data;
+}
+
+// export const deletedFile= (id)=> axios.delete(`${API_BASE}/${id}`);

@@ -2,44 +2,61 @@
 import './App.css';
 import Typography from "@mui/material/Typography";
 import { Pagination } from "@mui/material";
+import { useFiles } from './components/useFiles';
+import { useEffect, useState ,useRef,useMemo} from "react";
+import { ThemeContext } from './context/ThemeContext';
+import { useContext } from 'react';
 
-import { useCallback, useEffect, useState } from "react";
-// import { getFiles } from "./api/filesApi";
-import { getFiles } from "./api/filesApi";
+
 import FileUpload from "./components/FileUpload";
 import FileList from "./components/FileList";
 
 export default function App() {
+  // const[rename,SetRename]= useState("");
   const[search,setSearch]= useState("");
   const [sortBy, setSortBy] = useState("UploadedAtUtc");
+  const [pageNumber, setPageNumber] = useState(1);
 const [sortOrder, setSortOrder] = useState("desc");
+const [pageSize] = useState(10);
+const theme = useContext(ThemeContext);
+
 
 const [debouncedSearch, setDebouncedSearch] = useState("");
-
-  const[files,setFiles]=useState([]);
-  const [pageNumber, setPageNumber] = useState(1);
-
-const [pageSize] = useState(10);
-
-const [totalPages, setTotalPages] = useState(1);
-  const[loading,SetLoading]=useState(false);
+const { files, loading, refresh,totalPages, } = useFiles(pageNumber, pageSize,debouncedSearch,
+    sortBy,
+    sortOrder);
 
 
-  const LoadFiles = useCallback(async () => {
-    SetLoading(true);
 
-    const res = await getFiles(pageNumber, pageSize,debouncedSearch,sortBy,sortOrder);
+  const searchInputRef = useRef(null);
 
-    setFiles(res.items);
-    setTotalPages(res.totalPages);
+  const totalStorage = useMemo(() => {
+    console.log("Calculating total storage...");
 
-    SetLoading(false);
-}, [pageNumber, pageSize,debouncedSearch,sortBy,sortOrder]);
- 
-  useEffect(() => {
-    LoadFiles();
-}, [LoadFiles]);
+    return files.reduce((sum, file) => {
+        return sum + file.sizeInBytes;
+    }, 0);
 
+}, [files]);
+
+const formattedStorage = useMemo(() => {
+
+    if (totalStorage < 1024)
+        return `${totalStorage} Bytes`;
+
+    if (totalStorage < 1024 * 1024)
+        return `${(totalStorage / 1024).toFixed(2)} KB`;
+
+    return `${(totalStorage / (1024 * 1024)).toFixed(2)} MB`;
+
+}, [totalStorage]);
+
+
+  
+
+useEffect(()=> {
+  searchInputRef.current.focus();
+},[])
 
 useEffect(()=> {
   const timer= setTimeout(()=> {
@@ -53,10 +70,15 @@ useEffect(()=> {
    <Typography variant="h4">
     File Manager
 </Typography>
+<Typography variant="h6">
+    Current Theme: {theme}
+</Typography>
+
 <input
     type="text"
     placeholder="Search files..."
     value={search}
+    ref={searchInputRef}
     onChange={(e) => {
         setSearch(e.target.value);
         setPageNumber(1);
@@ -68,6 +90,13 @@ useEffect(()=> {
         fontSize: "16px"
     }}
 />
+<button onClick={()=> {
+ setSearch("");
+ setDebouncedSearch("");
+        setPageNumber(1);
+searchInputRef.current.focus();
+}}
+ >Clear</button>
 <div
   style={{
     display: "flex",
@@ -118,8 +147,33 @@ useEffect(()=> {
 
 
 
-       <FileUpload onUploaded={LoadFiles} />
-        {loading ? <p>Loading...</p> : <FileList files={files} onChanged={LoadFiles} />}
+       <FileUpload onUploaded={refresh} />
+
+<FileList
+    files={files}
+    onChanged={refresh}
+/>
+<div
+  style={{
+    margin: "20px 0",
+    padding: "15px",
+    border: "1px solid #ddd",
+    borderRadius: "8px",
+    backgroundColor: "#f8f9fa"
+  }}
+>
+  <h3>File Statistics</h3>
+
+  <p>
+    <strong>Total Files:</strong> {files.length}
+  </p>
+
+  <p>
+    <strong>Total Storage:</strong> {formattedStorage}
+  </p>
+</div>
+
+        {/* {loading ? <p>Loading...</p> : <FileList files={files}  />} */}
         <Pagination
       count={totalPages}
       page={pageNumber}
